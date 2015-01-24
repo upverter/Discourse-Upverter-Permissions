@@ -5,18 +5,16 @@
 
 after_initialize do
 
-  ApplicationController.class_eval do
+  TopicsController.class_eval do
     alias_method :orig_ensure_logged_in, :ensure_logged_in
-
     def ensure_logged_in
+      # This is a horrible thing to do, but it was the least invasive way I could
+      # think of to pass in cookies from the controller.
       TopicGuardian.cookies = cookies
       orig_ensure_logged_in
     end
-  end
 
-  TopicsController.class_eval do
     alias_method :orig_show, :show
-
     def show
       TopicGuardian.cookies = cookies
       orig_show
@@ -33,8 +31,6 @@ after_initialize do
       attr_accessor :cookies
     end
 
-    alias_method :orig_can_see_topic?, :can_see_topic?
-
     def can_see_upverter_design?(design_id)
       def fetch(uri_str, cookie, limit = 10)
         raise ArgumentError, 'HTTP redirect too deep' if limit == 0
@@ -50,12 +46,15 @@ after_initialize do
         end
       end
 
+      # Use the user's cookie to access the site. They should be logged in because of SSO.
+      # This is probably only possible because the forum is in a subdomain of the main site.
       cookie = CGI::Cookie.new('upverter', TopicGuardian.cookies['upverter']).to_s
 
       resp = fetch("http://#{SiteSetting.upverter_domain}/#{design_id}/check_permissions/", cookie)
       return (resp.code == "200")
     end
 
+    alias_method :orig_can_see_topic?, :can_see_topic?
     def can_see_topic?(topic)
       if !orig_can_see_topic?(topic)
         return false unless topic and !topic.deleted_at

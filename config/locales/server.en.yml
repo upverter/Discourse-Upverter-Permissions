@@ -1,0 +1,4 @@
+en:
+  site_settings:
+    upverter_domain: 'The domain name of your Upverter instance. Defaults to: "upverter.com"'
+    upverter_permissions_category: 'The name of the category where topics live that require permssions from Upverter. Defaults to the Embedding category.'

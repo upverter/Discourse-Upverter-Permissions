@@ -1,0 +1,7 @@
+upverter_permissions:
+  upverter_domain:
+    client: true
+    default: 'upverter.com'
+  upverter_permissions_category:
+    client: true
+    default: ''

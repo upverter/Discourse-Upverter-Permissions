@@ -54,22 +54,34 @@ after_initialize do
       return (resp.code == "200")
     end
 
+    def has_permission_from_upverter?(topic)
+      return false unless topic and !topic.deleted_at
+
+      category = SiteSetting.upverter_permissions_category
+      category = SiteSetting.embed_category if category == ''
+      category_id = Category.find_by(name_lower: category.try(:downcase)).id
+      return false unless category_id == topic.category_id
+
+      match = /(\w+) - Upverter$/.match(topic.title)
+      if match
+        return can_see_upverter_design?(match[1])
+      else
+        return false
+      end
+    end
+
     alias_method :orig_can_see_topic?, :can_see_topic?
     def can_see_topic?(topic)
       if !orig_can_see_topic?(topic)
-        return false unless topic and !topic.deleted_at
+        return has_permission_from_upverter?(topic)
+      end
+      return true
+    end
 
-        category = SiteSetting.upverter_permissions_category
-        category = SiteSetting.embed_category if category == ''
-        category_id = Category.find_by(name_lower: category.try(:downcase)).id
-        return false unless category_id == topic.category_id
-
-        match = /(\w+) - Upverter$/.match(topic.title)
-        if match
-          return can_see_upverter_design?(match[1])
-        else
-          return false
-        end
+    alias_method :orig_can_create_post_on_topic?, :can_create_post_on_topic?
+    def can_create_post_on_topic?(topic)
+      if !orig_can_create_post_on_topic?(topic)
+        return has_permission_from_upverter?(topic)
       end
       return true
     end

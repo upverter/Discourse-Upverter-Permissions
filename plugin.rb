@@ -51,13 +51,26 @@ after_initialize do
       end
 
       cookie = CGI::Cookie.new('upverter', TopicGuardian.cookies['upverter']).to_s
-      resp = fetch("http://#{SiteSetting.upverter_domain}/dummy/#{design_id}/", cookie)
+
+      resp = fetch("http://#{SiteSetting.upverter_domain}/#{design_id}/check_permissions/", cookie)
       return (resp.code == "200")
     end
 
     def can_see_topic?(topic)
       if !orig_can_see_topic?(topic)
-        return can_see_upverter_design?('078648a542739eff')
+        return false unless topic and !topic.deleted_at
+
+        category = SiteSetting.upverter_permissions_category
+        category = SiteSetting.embed_category if category == ''
+        category_id = Category.find_by(name_lower: category.try(:downcase)).id
+        return false unless category_id == topic.category_id
+
+        match = /(\w+) - Upverter$/.match(topic.title)
+        if match
+          return can_see_upverter_design?(match[1])
+        else
+          return false
+        end
       end
       return true
     end

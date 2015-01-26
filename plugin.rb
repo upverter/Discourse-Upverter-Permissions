@@ -47,7 +47,7 @@ after_initialize do
       end
 
       if !TopicGuardian.cookies['upverter']
-        return false
+        TopicGuardian.cookies['upverter'] = ''
       end
 
       # Use the user's cookie to access the site. They should be logged in because of SSO.

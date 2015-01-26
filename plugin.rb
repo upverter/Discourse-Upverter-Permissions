@@ -1,6 +1,6 @@
 # name: upverter-permissions
 # about: Check Upverter permissions to see if a topic should be accessible.
-# version: 0.1
+# version: 0.2
 # authors: Ryan Fox
 
 after_initialize do
@@ -62,7 +62,7 @@ after_initialize do
       category_id = Category.find_by(name_lower: category.try(:downcase)).id
       return false unless category_id == topic.category_id
 
-      match = /(\w+) - Upverter$/.match(topic.title)
+      match = /Design (\w+)$/.match(topic.title)
       if match
         return can_see_upverter_design?(match[1])
       else
@@ -86,6 +86,21 @@ after_initialize do
       return true
     end
 
+  end
+
+  TopicEmbed.class_eval do
+    self.singleton_class.send(:alias_method, :orig_find_remote, :find_remote)
+    def self.find_remote(url)
+      # The default embedder gives crappy results for design pages. Also, many of them won't be
+      # accessible to the background process that downloads pages. So I'll just provide a
+      # title and initial post contents myself, with useful stuff.
+      match = /https?:\/\/#{Regexp.quote(SiteSetting.upverter_domain)}\/([^\/]+?)\/([^\/]+?)\/([^\/]+?)\/?/.match(url)
+      if match
+        return ["Design #{match[2]}", "<iframe title='test-8' width='800' height='600' scrolling='no' frameborder='0' name='test-8' class='eda_tool' src='https://#{SiteSetting.upverter_domain}/eda/embed/#designId=#{match[2]}'></iframe>\n"]
+      else
+        return self.orig_find_remote(url)
+      end
+    end
   end
 
 end

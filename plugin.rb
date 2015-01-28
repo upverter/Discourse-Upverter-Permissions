@@ -98,7 +98,7 @@ after_initialize do
       # The default embedder gives crappy results for design pages. Also, many of them won't be
       # accessible to the background process that downloads pages. So I'll just provide a
       # title and initial post contents myself, with useful stuff.
-      match = /https?:\/\/#{Regexp.quote(SiteSetting.upverter_domain)}\/([^\/]+?)\/([^\/]+?)\/([^\/]+?)\/?/.match(url)
+      match = /https?:\/\/#{Regexp.quote(SiteSetting.upverter_domain)}\/design\/([^\/]+)\/?/.match(url)
       if match
         return ["Design #{match[2]}", "<iframe title='test-8' width='800' height='600' scrolling='no' frameborder='0' name='test-8' class='eda_tool' src='https://#{SiteSetting.upverter_domain}/eda/embed/#designId=#{match[2]}'></iframe>\n"]
       else

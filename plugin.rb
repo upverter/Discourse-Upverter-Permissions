@@ -31,7 +31,7 @@ after_initialize do
       attr_accessor :cookies
     end
 
-    def can_see_upverter_design?(design_id)
+    def can_see_upverter_page?(url)
       def fetch(uri_str, cookie, limit = 10)
         raise ArgumentError, 'HTTP redirect too deep' if limit == 0
 
@@ -54,8 +54,16 @@ after_initialize do
       # This is probably only possible because the forum is in a subdomain of the main site.
       cookie = CGI::Cookie.new('upverter', TopicGuardian.cookies['upverter']).to_s
 
-      resp = fetch("http://#{SiteSetting.upverter_domain}/#{design_id}/check_permissions/", cookie)
+      resp = fetch(url, cookie)
       return (resp.code == "200")
+    end
+
+    def can_see_upverter_design?(design_id)
+      return can_see_upverter_page?("http://#{SiteSetting.upverter_domain}/#{design_id}/check_permissions/")
+    end
+
+    def can_see_upverter_component?(upn)
+      return can_see_upverter_page?("http://#{SiteSetting.upverter_domain}/upn/#{upn}/check_permissions/")
     end
 
     def has_permission_from_upverter?(topic)
@@ -69,9 +77,14 @@ after_initialize do
       match = /Design (\w+)$/.match(topic.title)
       if match
         return can_see_upverter_design?(match[1])
-      else
-        return false
       end
+
+      match = /Component (\w+)$/.match(topic.title)
+      if match
+        return can_see_upverter_component?(match[1])
+      end
+
+      return false
     end
 
     alias_method :orig_can_see_topic?, :can_see_topic?
@@ -100,10 +113,15 @@ after_initialize do
       # title and initial post contents myself, with useful stuff.
       match = /https?:\/\/#{Regexp.quote(SiteSetting.upverter_domain)}\/design\/([^\/]+)\/?/.match(url)
       if match
-        return ["Design #{match[2]}", "<iframe title='test-8' width='800' height='600' scrolling='no' frameborder='0' name='test-8' class='eda_tool' src='https://#{SiteSetting.upverter_domain}/eda/embed/#designId=#{match[2]}'></iframe>\n"]
-      else
-        return self.orig_find_remote(url)
+        return ["Design #{match[1]}", "<iframe title='test-8' width='800' height='600' scrolling='no' frameborder='0' name='test-8' class='eda_tool' src='https://#{SiteSetting.upverter_domain}/eda/embed/#designId=#{match[1]}'></iframe>\n"]
       end
+
+      match = /https?:\/\/#{Regexp.quote(SiteSetting.upverter_domain)}\/upn\/([^\/]+)\/?/.match(url)
+      if match
+        return ["Component #{match[1]}", "<iframe width='800' height='600' scrolling='no' class='eda_tool' style='border: none; outline: 1px solid black' src='https://#{SiteSetting.upverter_domain}/upn/#{match[1]}/viewer/?embed=true'></iframe>\n"]
+      end
+
+      return self.orig_find_remote(url)
     end
   end
 

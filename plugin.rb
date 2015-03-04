@@ -46,13 +46,14 @@ after_initialize do
         end
       end
 
-      if !TopicGuardian.cookies['upverter']
-        TopicGuardian.cookies['upverter'] = ''
+      cookie_string = ''
+      if TopicGuardian.cookies and TopicGuardian.cookies['upverter']
+        cookie_string = TopicGuardian.cookies['upverter']
       end
 
       # Use the user's cookie to access the site. They should be logged in because of SSO.
       # This is probably only possible because the forum is in a subdomain of the main site.
-      cookie = CGI::Cookie.new('upverter', TopicGuardian.cookies['upverter']).to_s
+      cookie = CGI::Cookie.new('upverter', cookie_string).to_s
 
       resp = fetch(url, cookie)
       return (resp.code == "200")

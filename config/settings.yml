@@ -2,6 +2,9 @@ upverter_permissions:
   upverter_domain:
     client: true
     default: 'upverter.com'
+  upverter_cache_bypass_subdomain:
+    client: true
+    default: 'direct.'
   upverter_permissions_category:
     client: true
     default: ''

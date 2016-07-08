@@ -56,7 +56,7 @@ after_initialize do
       cookie = CGI::Cookie.new('upverter', cookie_string).to_s
 
       resp = fetch(url, cookie)
-      return (resp.code == "200")
+      return (resp.body == '{"access": "ok"}')
     end
 
     def can_see_upverter_design?(design_id)

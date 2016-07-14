@@ -1,6 +1,6 @@
 # name: upverter-permissions
 # about: Check Upverter permissions to see if a topic should be accessible.
-# version: 0.2
+# version: 0.4
 # authors: Ryan Fox
 
 after_initialize do

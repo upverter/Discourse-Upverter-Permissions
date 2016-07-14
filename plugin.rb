@@ -97,8 +97,8 @@ after_initialize do
     end
 
     alias_method :orig_can_see_topic?, :can_see_topic?
-    def can_see_topic?(topic)
-      if !orig_can_see_topic?(topic)
+    def can_see_topic?(topic, hide_deleted=true)
+      if !orig_can_see_topic?(topic, hide_deleted)
         return has_permission_from_upverter?(topic)
       end
       return true

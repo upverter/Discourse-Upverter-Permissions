@@ -22,7 +22,7 @@ after_initialize do
   end
 
   TopicGuardian.class_eval do
-    require 'net/http'
+    require 'net/https'
     require 'cgi'
 
     # Add cookies as an instance variable on the class.
@@ -39,9 +39,11 @@ after_initialize do
         url = URI.parse(uri_str)
         req = Net::HTTP::Get.new(url.path)
         req['Cookie'] = cookie
-	Rails.logger.info "starting HTTP request #{url.host} #{url.port} #{url.path}"
-        response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
-	Rails.logger.info "got response #{response}"
+        Rails.logger.info "starting HTTP request #{url.host} #{url.port} #{url.path}"
+        http = Net::HTTP.new(url.host, url.port)
+        http.use_ssl = true
+        response = http.request(req)
+        Rails.logger.info "got response #{response}"
         case response
         when Net::HTTPRedirection then fetch(response['location'], cookie, limit - 1)
         else

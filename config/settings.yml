@@ -5,6 +5,6 @@ upverter_permissions:
   upverter_cache_bypass_subdomain:
     client: true
     default: 'direct.'
-  upverter_permissions_category:
+  upverter_permissions_categories:
     client: true
     default: ''

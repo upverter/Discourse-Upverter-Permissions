@@ -74,10 +74,9 @@ after_initialize do
     def has_permission_from_upverter?(topic)
       return false unless topic and !topic.deleted_at
 
-      category = SiteSetting.upverter_permissions_category
-      category = SiteSetting.embed_category if category == ''
-      category_id = Category.find_by(name_lower: category.try(:downcase)).id
-      return false unless category_id == topic.category_id
+      categories = SiteSetting.upverter_permissions_categories.split(',')
+      category_ids = categories.map { |category| Category.find_by(name_lower: category.try(:downcase)).id }
+      return false unless category_ids.include?(topic.category_id)
 
       match = /Design (\w+)$/.match(topic.title)
       if match

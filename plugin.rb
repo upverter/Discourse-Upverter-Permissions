@@ -32,7 +32,7 @@ after_initialize do
     end
 
     def can_see_upverter_page?(url)
-      logger.info "checking if page #{url} can be seen"
+      Rails.logger.info "checking if page #{url} can be seen"
       def fetch(uri_str, cookie, limit = 10)
         raise ArgumentError, 'HTTP redirect too deep' if limit == 0
 
@@ -57,7 +57,7 @@ after_initialize do
       cookie = CGI::Cookie.new('upverter', cookie_string).to_s
 
       resp = fetch(url, cookie)
-      logger.info "got response #{resp.body}"
+      Rails.logger.info "got response #{resp.body}"
       return (resp.body == '{"access": "ok"}')
     end
 
@@ -70,7 +70,7 @@ after_initialize do
     end
 
     def can_see_upverter_task?(task_id)
-      logger.info "checking if task #{task_id} can be seen"
+      Rails.logger.info "checking if task #{task_id} can be seen"
       return can_see_upverter_page?("https://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/task/#{task_id}/check_permissions/")
     end
 
@@ -93,7 +93,7 @@ after_initialize do
 
       match = /Task (\w+)$/.match(topic.title)
       if match
-	logger.info "topic is task with ID #{match[1]}"
+	Rails.logger.info "topic is task with ID #{match[1]}"
         return can_see_upverter_task?(match[1])
       end
 

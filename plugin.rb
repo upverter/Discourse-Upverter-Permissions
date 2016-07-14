@@ -39,7 +39,9 @@ after_initialize do
         url = URI.parse(uri_str)
         req = Net::HTTP::Get.new(url.path)
         req['Cookie'] = cookie
+	Rails.logger.info "starting HTTP request #{url.host} #{url.post} #{url.path}"
         response = Net::HTTP.start(url.host, url.port) { |http| http.request(req) }
+	Rails.logger.info "got response #{response}"
         case response
         when Net::HTTPRedirection then fetch(response['location'], cookie, limit - 1)
         else

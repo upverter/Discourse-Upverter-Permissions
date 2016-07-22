@@ -1,6 +1,6 @@
 # name: upverter-permissions
 # about: Check Upverter permissions to see if a topic should be accessible.
-# version: 0.4
+# version: 0.5
 # authors: Ryan Fox
 
 after_initialize do
@@ -62,15 +62,15 @@ after_initialize do
     end
 
     def can_see_upverter_design?(design_id)
-      return can_see_upverter_page?("http://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/#{design_id}/check_permissions/")
+      return can_see_upverter_page?("https://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/#{design_id}/check_permissions/")
     end
 
     def can_see_upverter_component?(upn)
-      return can_see_upverter_page?("http://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/upn/#{upn}/check_permissions/")
+      return can_see_upverter_page?("https://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/upn/#{upn}/check_permissions/")
     end
 
     def can_see_upverter_task?(task_id)
-      return can_see_upverter_page?("http://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/task/#{task_id}/check_permissions/")
+      return can_see_upverter_page?("https://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/task/#{task_id}/check_permissions/")
     end
 
     def has_permission_from_upverter?(topic)

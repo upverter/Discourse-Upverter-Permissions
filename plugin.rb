@@ -55,7 +55,7 @@ after_initialize do
 
       # Use the user's cookie to access the site. They should be logged in because of SSO.
       # This is probably only possible because the forum is in a subdomain of the main site.
-      cookie = CGI::Cookie.new('upverter', cookie_string).to_s
+      cookie = CGI::Cookie.new('upverter', cookie_string)
 
       resp = fetch(url, cookie)
       return (resp.body == '{"access": "ok"}')

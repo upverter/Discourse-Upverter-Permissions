@@ -2,6 +2,7 @@
 # about: Check Upverter permissions to see if a topic should be accessible.
 # version: 0.5
 # authors: Ryan Fox
+require 'json'
 
 after_initialize do
 
@@ -58,7 +59,13 @@ after_initialize do
       cookie = CGI::Cookie.new('upverter', cookie_string).to_s
 
       resp = fetch(url, cookie)
-      return (resp.body == '{"access": "ok"}')
+      begin
+        body_data = JSON.parse(resp.body)
+        access_allowed = (body_data['access'] == 'ok')
+      rescue JSON::ParseError
+        access_allowed = false
+      end
+      return access_allowed
     end
 
     def can_see_upverter_design?(design_id)

@@ -1,6 +1,6 @@
 # name: upverter-permissions
 # about: Check Upverter permissions to see if a topic should be accessible.
-# version: 0.6
+# version: 0.5
 # authors: Ryan Fox
 
 after_initialize do
@@ -37,7 +37,7 @@ after_initialize do
 
         url = URI.parse(uri_str)
         req = Net::HTTP::Get.new(url.path)
-        req['Cookie'] = 'upverter=' + cookie.gsub(' ', '+')
+        req['Cookie'] = cookie
         http = Net::HTTP.new(url.host, url.port)
         http.use_ssl = (url.scheme == "https")
         response = http.request(req)
@@ -55,7 +55,7 @@ after_initialize do
 
       # Use the user's cookie to access the site. They should be logged in because of SSO.
       # This is probably only possible because the forum is in a subdomain of the main site.
-      cookie = cookie_string
+      cookie = CGI::Cookie.new('upverter', cookie_string).to_s
 
       resp = fetch(url, cookie)
       return (resp.body == '{"access": "ok"}')

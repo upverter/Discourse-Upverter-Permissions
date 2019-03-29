@@ -69,15 +69,15 @@ after_initialize do
     end
 
     def can_see_upverter_design?(design_id)
-      return can_see_upverter_page?("https://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/#{design_id}/check_permissions/")
+      return can_see_upverter_page?("https://#{SiteSetting.upverter_domain}/forumapi/#{design_id}/check_permissions/")
     end
 
     def can_see_upverter_component?(upn)
-      return can_see_upverter_page?("https://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/upn/#{upn}/check_permissions/")
+      return can_see_upverter_page?("https://#{SiteSetting.upverter_domain}/forumapi/upn/#{upn}/check_permissions/")
     end
 
     def can_see_upverter_task?(task_id)
-      return can_see_upverter_page?("https://#{SiteSetting.upverter_cache_bypass_subdomain}#{SiteSetting.upverter_domain}/task/#{task_id}/check_permissions/")
+      return can_see_upverter_page?("https://#{SiteSetting.upverter_domain}/forumapi/task/#{task_id}/check_permissions/")
     end
 
     def has_permission_from_upverter?(topic)
@@ -136,12 +136,12 @@ after_initialize do
 
       match = /https?:\/\/#{Regexp.quote(SiteSetting.upverter_domain)}\/upn\/([^\/]+)\/?/.match(url)
       if match
-        return ["Component #{match[1]}", "<iframe width='800' height='600' scrolling='no' class='eda_tool' style='border: none; outline: 1px solid black' src='https://#{SiteSetting.upverter_domain}/upn/#{match[1]}/viewer/?embed=true'></iframe>\n"]
+        return ["Component #{match[1]}", "<iframe width='800' height='600' scrolling='no' class='eda_tool' style='border: none; outline: 1px solid black' src='https://#{SiteSetting.upverter_domain}/forumapi/upn/#{match[1]}/viewer/?embed=true'></iframe>\n"]
       end
 
       match = /https?:\/\/#{Regexp.quote(SiteSetting.upverter_domain)}\/task\/([^\/]+)\/?/.match(url)
       if match
-        return ["Task #{match[1]}", "<iframe width='800' height='600' scrolling='no' class='eda_tool' style='border: none; outline: 1px solid black' src='https://#{SiteSetting.upverter_domain}/task/#{match[1]}/viewer/?embed=true'></iframe>\n"]
+        return ["Task #{match[1]}", "<iframe width='800' height='600' scrolling='no' class='eda_tool' style='border: none; outline: 1px solid black' src='https://#{SiteSetting.upverter_domain}/forumapi/task/#{match[1]}/viewer/?embed=true'></iframe>\n"]
       end
 
       return self.orig_find_remote(url)
